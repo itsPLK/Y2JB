@@ -32,6 +32,8 @@
         // hack for scrolling messages
         let maxLines = 56;
         
+        let connected_ip = null;
+
         async function log(message) {
             if (!outputElement) {
                 outputElement = document.getElementById('output');
@@ -52,12 +54,14 @@
             
             await new Promise(resolve => requestAnimationFrame(resolve));
     
-            try {
-                await fetch('http://192.168.1.180:8080/log', {
-                    method: 'POST',
-                    body: message,
-                });
-            } catch (e) { }
+            if (connected_ip) {
+                try {
+                    await fetch('http://' + connected_ip + ':8080/log', {
+                        method: 'POST',
+                        body: message,
+                    });
+                } catch (e) { }
+            }
         }
         
         function toHex(num) {
@@ -566,8 +570,16 @@
                             
                             continue;
                         }
-                        
-                        await log("Client connected, fd: " + Number(client_fd));
+
+                        // Read client IP from sockaddr_in
+                        const ip_bytes = read32(sockaddr_in + 4n);
+                        const ip1 = Number((ip_bytes >> 0n) & 0xFFn);
+                        const ip2 = Number((ip_bytes >> 8n) & 0xFFn);
+                        const ip3 = Number((ip_bytes >> 16n) & 0xFFn);
+                        const ip4 = Number((ip_bytes >> 24n) & 0xFFn);
+                        connected_ip = ip1 + "." + ip2 + "." + ip3 + "." + ip4;
+
+                        await log("Client connected from " + connected_ip + ", fd: " + Number(client_fd));
                         
                         let total_read = 0;
                         let read_error = false;
