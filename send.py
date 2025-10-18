@@ -1,36 +1,5 @@
 import socket
 import sys
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
-
-# log server from: https://github.com/Gezine/Y2JB/blob/main/log.py
-class LogHandler(BaseHTTPRequestHandler):
-    def log_message(self, format, *args):
-        pass  # Suppress default HTTP logging
-    
-    def do_POST(self):
-        length = int(self.headers['Content-Length'])
-        log_msg = self.rfile.read(length).decode('utf-8')
-        print(log_msg, flush=True)
-        
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-    
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
-
-def start_logger(port=8080):
-    """Start HTTP logger server in background thread"""
-    server = HTTPServer(('0.0.0.0', port), LogHandler)
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
-    print(f"[+] Logger started on port {port}")
-    return server
 
 def send_js_payload(host, port, js_file_path):
     """
@@ -88,18 +57,4 @@ if __name__ == "__main__":
     port = int(sys.argv[2])
     js_file = sys.argv[3]
     
-    # Start logger first
-    logger_server = start_logger(8080)
-    print("[*] Logger is ready to receive logs\n")
-    
-    # Send payload
     send_js_payload(host, port, js_file)
-    
-    # Keep logger running
-    print("\n[*] Waiting for logs... (Press Ctrl+C to exit)")
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        print("\n[*] Shutting down...")
-        logger_server.shutdown()
